@@ -20,9 +20,7 @@ class APIHandler(BaseHandler):
 
 class AccidentListHandler(APIHandler):
     def get(self, request):
-        context = {
-            'accidents': (yield from self.get_api_json(request, 'accident')),
-        }
+        context = yield from self.get_api_json(request, 'accident')
         return aiohttp_jinja2.render_template('accident-list.html', request, context)
 
 

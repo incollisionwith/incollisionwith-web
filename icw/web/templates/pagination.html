@@ -1,0 +1,9 @@
+        <div class="pagination">
+{% if _links.prev -%}
+            <a href="{{ _links.prev.href }}"><i class="fa fa-chevron-left" title="Previous page"> </i></a>
+{% endif -%}
+            <span class="pagination-current">Page {{ page }} of {{ pageCount }}</span>
+{% if _links.next -%}
+            <a href="{{ _links.next.href }}"><i class="fa fa-chevron-right" title="Next page"> </i></a>
+{% endif -%}
+        </div>

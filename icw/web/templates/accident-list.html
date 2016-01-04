@@ -8,6 +8,7 @@
 
     </div>
     <div class="pure-u-3-4">
+        {% include "pagination.html" -%}
         <table class="pure-table">
             <thead>
                 <tr>
@@ -20,7 +21,7 @@
                 </tr>
             </thead>
             <tbody>
-{% for accident in accidents -%}
+{% for accident in _embedded.item -%}
                 <tr>
                     <td><a href="incident/{{ accident.id }}">{{ accident.id }}</a></td>
                     <td>{{ accident.dateTime if accident.dateTime else accident.date }}</td>
@@ -32,6 +33,7 @@
 {% endfor -%}
             </tbody>
         </table>
+        {% include "pagination.html" -%}
     </div>
 </div>
 {% endblock %}

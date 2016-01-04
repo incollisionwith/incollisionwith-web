@@ -72,4 +72,7 @@ table.pure-table.accident-detail {
     color: #ffcc00;
 }
 
-
+.pagination {
+    margin: 1em;
+    text-align: center;
+}
