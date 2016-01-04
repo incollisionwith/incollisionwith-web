@@ -14,6 +14,8 @@ class APIHandler(BaseHandler):
             accident_url = request.app['api-url'] + path
             response = yield from request.app['api-session'].get(accident_url + '?' + request.query_string)
             return (yield from response.json())
+        except aiohttp.errors.ClientOSError as e:
+            raise aiohttp.web.HTTPServiceUnavailable
         except aiohttp.errors.ClientError as e:
             raise aiohttp.web.HTTPError(status=e.status)
 
