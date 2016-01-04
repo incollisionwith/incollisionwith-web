@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block article %}
+<h1>Incidents</h1>
+
+<div class="pure-g">
+    <div class="pure-u-1-4">
+
+    </div>
+    <div class="pure-u-3-4">
+        <table class="pure-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>When</th>
+                    <th>Vehicles</th>
+                    <th>Casualties</th>
+                    <th>Severity</th>
+                    <th>News links?</th>
+                </tr>
+            </thead>
+            <tbody>
+{% for accident in accidents -%}
+                <tr>
+                    <td><a href="incident/{{ accident.id }}">{{ accident.id }}</a></td>
+                    <td>{{ accident.dateTime if accident.dateTime else accident.date }}</td>
+                    <td>{{ accident.numberOfVehicles }} {% for vehicle in accident.vehicles %}<i title="{{ vehicle.type.label }}" class="fa fa-{{ vehicle.type.fontAwesome }}"> </i> {% endfor %}</td>
+                    <td>{{ accident.numberOfCasualties }} {% for vehicle in accident.vehicles %}{% for casualty in vehicle.casualties %}<i title="{{ casualty.type.label }}" class="fa fa-{{ casualty.type.fontAwesome }} casualty-severity-{{ casualty.severity.id }}"> </i> {% endfor %}{% endfor %}</td>
+                    <td>{{ accident.severity.label }}</td>
+                    <td>{{ 'yes' if accident.citations else 'no' }}</td>
+                </tr>
+{% endfor -%}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

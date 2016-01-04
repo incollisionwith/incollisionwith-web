@@ -1,0 +1,12 @@
+PyYAML
+SPARQLWrapper
+SQLAlchemy
+GeoAlchemy2
+aiohttp
+aiohttp_jinja2
+aiohttp_utils
+astral
+psycopg2
+pytz
+rdflib
+shapely

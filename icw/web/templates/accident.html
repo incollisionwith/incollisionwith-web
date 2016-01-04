@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block article %}
+
+<h1 hidden>Incident</h1>
+
+{% if location -%}
+<div class="pure-g">
+  <div class="accident-map map pure-u-1" data-lon="{{ location.lon }}" data-lat="{{ location.lat }}"></div>
+</div>
+{% endif -%}
+
+<div class="pure-g">
+    <div class="pure-u-1 pure-u-md-1-2">
+        <table class="pure-table accident-detail">
+            <tbody>
+              <tr>
+                  <th>When</th>
+                  <td>{{ dateTime if dateTime else date }}</td>
+              </tr>
+              <tr>
+                  <th>Police attended?</th>
+                  <td>{{ "yes" if policeAttended else "no" }}</td>
+              </tr>
+{% if solarElevation -%}
+              <tr>
+                  <th>Solar elevation</th>
+                  <td>{{ solarElevation|round|int }}° ({% if solarElevation < -6 %}night{% elif solarElevation < 0 %}dawn or dusk{% else %}day{% endif %})</td>
+              </tr>
+{% endif -%}
+            </tbody>
+        </table>
+    </div>
+    <div class="pure-u-1 pure-u-md-1-2">
+        <table class="pure-table accident-detail">
+            <tbody>
+              <tr>
+                  <th>Junction?</th>
+                  <td>{{ junctionDetail.label }}{% if junctionControl and junctionControl.id != 0 %}<br>
+                      {{ junctionControl.label }}{% endif %}
+                  </td>
+              </tr>
+              <tr>
+                  <th>Severity</th>
+                  <td>{{ severity.label }}</td>
+              </tr>
+              <tr>
+                  <th>Involved</th>
+                  <td>{{ numberOfVehicles }} vehicle{{ "s" if numberOfVehicles > 1 }}, and {{ numberOfCasualties }} casualt{{ "ies" if numberOfCasualties > 1 else "y" }}</td>
+              </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<table class="vehicles pure-table pure-table-bordered">
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Manoeuvre</th>{% if junctionDetail.id != 0 %}
+            <th>Junction location</th>{% endif %}
+            <th>Casualties</th>
+        </tr>
+    </thead>
+    <tbody>{% for vehicle in vehicles %}
+        <tr class="vehicle">
+            <th class="vehicle-ref">{{ vehicle.vehicleRef }}</th>
+            <td class="vehicle-type"><i title="{{ vehicle.type.label }}" class="fa fa-{{ vehicle.type.fontAwesome }} fa-2x"> </i></td>
+            <td class="vehicle-location">{% if vehicle.location.id != 0 %}{{ vehicle.location.label }}{% endif %}</td>
+            <td class="vehicle-manoeuvre">{% if vehicle.manoeuvre.id != 18 %}{{ vehicle.manoeuvre.label }}{% endif %}</td>{% if junctionDetail.id != 0 %}
+            <td class="vehicle-junction-location">{% if vehicle.junctionLocation.id != 0 %}{{ vehicle.junctionLocation.label }}{% endif %}</td>{% endif %}
+            <td>{% if vehicle.casualties %}
+                <table class="pure-table">
+                    <thead>
+                        <th>N°</th>
+                        <th>Severity</th>
+                        <th>Class</th>
+                        <th>Sex</th>
+                        <th>Age</th>
+
+                    </thead>
+                    <tbody>{% for casualty in vehicle.casualties %}
+                        <tr>
+                            <th>{{ casualty.casualtyRef }}</th>
+                            <td>{{ casualty.severity.label }}</td>
+                            <td>{{ casualty.class.label }}</td>
+                            <td>{{ casualty.sex.label }}</td>
+                            <td>{{ casualty.age if casualty.age is not none else casualty.ageBand.label }}</td>
+                        </tr>
+                    {% endfor %}</tbody>
+                </table>{% endif %}
+            </td>
+        </tr>
+    {% endfor %}</tbody>
+</table>
+
+{% if citations %}
+<ul>{% for citation in citations %}
+    <li><a href="{{ citation.url }}">{{ citation.title or citation.url }}</a>
+        {% if citation.publisher %} — <i>{{ citation.publisher }}</i>{% endif %}
+        {% if citation.published %} ({{ citation.published }}){% endif %}
+        {% if citation.description %}<br>
+    {{ citation.description }}{% endif %}</li>
+{% endfor %}</ul>
+{% endif %}
+
+<form method="post" action="{{ api_url }}citation">
+    <input type="hidden" name="accident_id" value="{{ id }}">
+    <label for="url">URL:</label> <input type="url" name="url"> <input type="submit">
+</form>
+{% endblock %}
