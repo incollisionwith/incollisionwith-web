@@ -29,13 +29,21 @@
             <a class="pure-menu-heading" href="/">In Collision With</a>
             <ul class="pure-menu-list">
                 <li class="pure-menu-item"><a class="pure-menu-link" href="/incident">Incidents</a></li>
+<!--
                 <li class="pure-menu-item"><a class="pure-menu-link" href="/reporting">Reporting</a></li>
                 <li class="pure-menu-item"><a class="pure-menu-link" href="/statistics">Statistics</a></li>
                 <li class="pure-menu-item"><a class="pure-menu-link" href="/about">About</a></li>
+-->
             </ul>
         </div></header>
 
         <article>{% block article %}{% endblock %}</article>
+
+        <div class="footer">
+            <a class="twitter" href="https://twitter.com/incollisionwith" title="Twitter"><i class="fa fa-twitter fa-2x"> </i></a>
+            <a class="github" href="https://github.com/incollisionwith" title="GitHub"><i class="fa fa-github fa-2x"> </i></a>
+
+        </div>
     {% endblock %}
     <script src="{{ static_url }}js/main.js"></script>
     </body>
