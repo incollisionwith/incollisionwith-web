@@ -109,42 +109,44 @@
             <td class="vehicle-detail">
                 <table class="pure-table-bordered">
                     {% if vehicle.make %}<tr>
-                        <th>Make{% if vehicle.model %} and model{%endif %}</th>
+                        <th>Make{% if vehicle.model %} and model{% endif %}</th>
                         <td>{{ vehicle.make }}{% if vehicle.model %} {{ vehicle.model }}{% endif %}</td>
                     </tr>{% endif %}
-                    {% if vehicle.location.id != 0 %}<tr>
+                    {% if vehicle.location and vehicle.location.id != 0 %}<tr>
                         <th>Location</th>
                         <td>{{ vehicle.location.label }}</td>
                     </tr>{% endif %}
-                    {% if vehicle.junctionLocation.id != 0 %}<tr>
+                    {% if vehicle.junctionLocation and vehicle.junctionLocation.id != 0 %}<tr>
                         <th>Junction location</th>
                         <td>{{ vehicle.junctionLocation.label }}</td>
                     </tr>{% endif %}
-                    {% if vehicle.manoeuvre.id != 18 %}<tr>
+                    {% if vehicle.manoeuvre and vehicle.manoeuvre.id != 18 %}<tr>
                         <th>Manoeuvre</th>
                         <td>{{ vehicle.manoeuvre.label }}</td>
                     </tr>{% endif %}
-                    {% if vehicle.skiddingAndOverturning.id != 0 %}<tr>
+                    {% if vehicle.skiddingAndOverturning and vehicle.skiddingAndOverturning.id != 0 %}<tr>
                         <th>Skidding and overturning?</th>
                         <td>{{ vehicle.skiddingAndOverturning.label }}</td>
                     </tr>{% endif %}
-                    {% if vehicle.leavingCarriageway.id != 0 %}<tr>
+                    {% if vehicle.leavingCarriageway and vehicle.leavingCarriageway.id != 0 %}<tr>
                         <th>Left carriageway?</th>
                         <td>{{ vehicle.leavingCarriageway.label }}</td>
                     </tr>{% endif %}
-                    {% if vehicle.firstPointOfImpact.id != 0 %}<tr>
+                    {% if vehicle.firstPointOfImpact and vehicle.firstPointOfImpact.id != 0 %}<tr>
                         <th>1<sup>st</sup> point of impact</th>
                         <td>{{ vehicle.firstPointOfImpact.label }}</td>
                     </tr>{% endif %}
-{% if vehicle.hitObjectInCarriageway.id != 0 or vehicle.hitObjectOffCarriageway.id != 0 -%}
+{% if ((vehicle.hitObjectInCarriageway and vehicle.hitObjectInCarriageway.id != 0) or
+       (vehicle.hitObjectOffCarriageway and vehicle.hitObjectOffCarriageway.id != 0)) -%}
                     <tr>
                         <th>Hit object?</th>
                         <td>
-{% if vehicle.hitObjectInCarriageway.id != 0 -%}
+{% if vehicle.hitObjectInCarriageway and vehicle.hitObjectInCarriageway.id != 0 -%}
                             {{ vehicle.hitObjectInCarriageway.label }}
 {% endif -%}
-{% if vehicle.hitObjectInCarriageway.id != 0 and vehicle.hitObjectOffCarriageway.id != 0 -%}<br>{% endif -%}
-{% if vehicle.hitObjectOffCarriageway.id != 0 -%}
+{% if ((vehicle.hitObjectInCarriageway and vehicle.hitObjectInCarriageway.id != 0) and
+       (vehicle.hitObjectOffCarriageway and vehicle.hitObjectOffCarriageway.id != 0)) -%}<br>{% endif %}
+{% if vehicle.hitObjectOffCarriageway and vehicle.hitObjectOffCarriageway.id != 0 -%}
                             {{ vehicle.hitObjectOffCarriageway.label }}
 {% endif -%}                        </td>
                     </tr>{% endif %}
@@ -153,12 +155,14 @@
             <td>
                 <table class="pure-table-bordered">
                     <thead>
-                        <th>N°</th>
-                        <th>Severity</th>
-                        <th>Class</th>
-                        <th>Sex</th>
-                        <th>Age</th>
-                        <th>Detail</th>
+                        <tr>
+                            <th>N°</th>
+                            <th>Severity</th>
+                            <th>Class</th>
+                            <th>Sex</th>
+                            <th>Age</th>
+                            <th>Detail</th>
+                        </tr>
                     </thead>
                     <tbody>
 {% set involvedDriver -%}
@@ -187,11 +191,11 @@
                                     <tbody>
                                         <tr>
                                             <th>Pedestrian location</th>
-                                            <td>{{ casualty.pedestrianLocation.label }}</td>
+                                            <td>{{ casualty.pedestrianLocation.label if casualty.pedestrianLocation else '' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Pedestrian movement</th>
-                                            <td>{{ casualty.pedestrianMovement.label }}</td>
+                                            <td>{{ casualty.pedestrianMovement.label if casualty.pedestrianMovement else '' }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -216,6 +220,6 @@
 
 <form method="post" action="{{ api_url }}citation">
     <input type="hidden" name="accident_id" value="{{ id }}">
-    <label for="url">URL:</label> <input type="url" name="url"> <input type="submit">
+    <label for="citation-url">URL:</label> <input type="url" id="citation-url" name="url"> <input type="submit">
 </form>
 {% endblock %}
