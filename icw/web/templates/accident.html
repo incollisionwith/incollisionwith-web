@@ -30,6 +30,22 @@
                   <td>{{ solarElevation|round|int }}° ({% if solarElevation < -6 %}night{% elif solarElevation < 0 %}dawn or dusk{% else %}day{% endif %})</td>
               </tr>
 {% endif -%}
+              <tr>
+                  <th>Light conditions</th>
+                  <td>{{ lightConditions.label }}</td>
+              </tr>
+              <tr>
+                  <th>Weather</th>
+                  <td>{{ weather.label }}</td>
+              </tr>
+              <tr>
+                  <th>Road type</th>
+                  <td>{{ roadType.label }}</td>
+              </tr>
+              <tr>
+                  <th>Pedestrian crossing (human)?</th>
+                  <td>{{ pedestrianCrossingHuman.label }}</td>
+              </tr>
             </tbody>
         </table>
     </div>
@@ -50,6 +66,22 @@
                   <th>Involved</th>
                   <td>{{ numberOfVehicles }} vehicle{{ "s" if numberOfVehicles > 1 }}, and {{ numberOfCasualties }} casualt{{ "ies" if numberOfCasualties > 1 else "y" }}</td>
               </tr>
+              <tr>
+                  <th>Carriageway hazards</th>
+                  <td>{{ carriagewayHazards.label }}</td>
+              </tr>
+              <tr>
+                  <th>Special conditions at site</th>
+                  <td>{{ specialConditions.label }}</td>
+              </tr>
+              <tr>
+                  <th>Speed limit</th>
+                  <td>{% if speedLimit %}{{ speedLimit }} mph{% else %}unknown{% endif %}</td>
+              </tr>
+              <tr>
+                  <th>Pedestrian crossing (physical)?</th>
+                  <td>{{ pedestrianCrossingPhysical.label }}</td>
+              </tr>
             </tbody>
         </table>
     </div>
@@ -60,39 +92,113 @@
         <tr>
             <th>N°</th>
             <th>Type</th>
-            <th>Location</th>
-            <th>Manoeuvre</th>{% if junctionDetail.id != 0 %}
-            <th>Junction location</th>{% endif %}
-            <th>Casualties</th>
+            <th>Detail</th>
+            <th>People</th>
         </tr>
     </thead>
     <tbody>{% for vehicle in vehicles %}
         <tr class="vehicle">
             <th class="vehicle-ref">{{ vehicle.vehicleRef }}</th>
-            <td class="vehicle-type"><i title="{{ vehicle.type.label }}" class="fa fa-{{ vehicle.type.fontAwesome }} fa-2x"> </i></td>
-            <td class="vehicle-location">{% if vehicle.location.id != 0 %}{{ vehicle.location.label }}{% endif %}</td>
-            <td class="vehicle-manoeuvre">{% if vehicle.manoeuvre.id != 18 %}{{ vehicle.manoeuvre.label }}{% endif %}</td>{% if junctionDetail.id != 0 %}
-            <td class="vehicle-junction-location">{% if vehicle.junctionLocation.id != 0 %}{{ vehicle.junctionLocation.label }}{% endif %}</td>{% endif %}
-            <td>{% if vehicle.casualties %}
-                <table class="pure-table">
+            <td class="vehicle-type">
+{% if vehicle.type.fontAwesome -%}
+                <i title="{{ vehicle.type.label }}" class="fa fa-{{ vehicle.type.fontAwesome }} fa-2x"> </i>
+{% else -%}
+                {{ vehicle.type.label }}
+{% endif -%}
+            </td>
+            <td class="vehicle-detail">
+                <table class="pure-table-bordered">
+                    {% if vehicle.make %}<tr>
+                        <th>Make{% if vehicle.model %} and model{%endif %}</th>
+                        <td>{{ vehicle.make }}{% if vehicle.model %} {{ vehicle.model }}{% endif %}</td>
+                    </tr>{% endif %}
+                    {% if vehicle.location.id != 0 %}<tr>
+                        <th>Location</th>
+                        <td>{{ vehicle.location.label }}</td>
+                    </tr>{% endif %}
+                    {% if vehicle.junctionLocation.id != 0 %}<tr>
+                        <th>Junction location</th>
+                        <td>{{ vehicle.junctionLocation.label }}</td>
+                    </tr>{% endif %}
+                    {% if vehicle.manoeuvre.id != 18 %}<tr>
+                        <th>Manoeuvre</th>
+                        <td>{{ vehicle.manoeuvre.label }}</td>
+                    </tr>{% endif %}
+                    {% if vehicle.skiddingAndOverturning.id != 0 %}<tr>
+                        <th>Skidding and overturning?</th>
+                        <td>{{ vehicle.skiddingAndOverturning.label }}</td>
+                    </tr>{% endif %}
+                    {% if vehicle.leavingCarriageway.id != 0 %}<tr>
+                        <th>Left carriageway?</th>
+                        <td>{{ vehicle.leavingCarriageway.label }}</td>
+                    </tr>{% endif %}
+                    {% if vehicle.firstPointOfImpact.id != 0 %}<tr>
+                        <th>1<sup>st</sup> point of impact</th>
+                        <td>{{ vehicle.firstPointOfImpact.label }}</td>
+                    </tr>{% endif %}
+{% if vehicle.hitObjectInCarriageway.id != 0 or vehicle.hitObjectOffCarriageway.id != 0 -%}
+                    <tr>
+                        <th>Hit object?</th>
+                        <td>
+{% if vehicle.hitObjectInCarriageway.id != 0 -%}
+                            {{ vehicle.hitObjectInCarriageway.label }}
+{% endif -%}
+{% if vehicle.hitObjectInCarriageway.id != 0 and vehicle.hitObjectOffCarriageway.id != 0 -%}<br>{% endif -%}
+{% if vehicle.hitObjectOffCarriageway.id != 0 -%}
+                            {{ vehicle.hitObjectOffCarriageway.label }}
+{% endif -%}                        </td>
+                    </tr>{% endif %}
+                </table>
+            </td>
+            <td>
+                <table class="pure-table-bordered">
                     <thead>
                         <th>N°</th>
                         <th>Severity</th>
                         <th>Class</th>
                         <th>Sex</th>
                         <th>Age</th>
-
+                        <th>Detail</th>
                     </thead>
-                    <tbody>{% for casualty in vehicle.casualties %}
+                    <tbody>
+{% set involvedDriver -%}
+{% for casualty in vehicle.casualties -%}
+{% if casualty.class.id == 1 -%}1{% endif -%}
+{% endfor -%}
+                        {% endset %}
+{% if not involvedDriver -%}
+                        <tr>
+                            <th></th>
+                            <td>uninjured</td>
+                            <td>driver or rider</td>
+                            <td>{{ vehicle.driverSex.label }}</td>
+                            <td>{{ vehicle.driverAge if vehicle.driverAge is not none else vehicle.driverAgeBand.label or '' }}</td>
+                            <td></td>
+                        </tr>{% endif %}
+                    {% for casualty in vehicle.casualties %}
                         <tr>
                             <th>{{ casualty.casualtyRef }}</th>
                             <td>{{ casualty.severity.label }}</td>
                             <td>{{ casualty.class.label }}</td>
                             <td>{{ casualty.sex.label }}</td>
-                            <td>{{ casualty.age if casualty.age is not none else casualty.ageBand.label }}</td>
+                            <td>{{ casualty.age if casualty.age is not none else casualty.ageBand.label or '' }}</td>
+                            <td>{% if casualty.type.id == 0 %}
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <th>Pedestrian location</th>
+                                            <td>{{ casualty.pedestrianLocation.label }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Pedestrian movement</th>
+                                            <td>{{ casualty.pedestrianMovement.label }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            {% endif %}</td>
                         </tr>
                     {% endfor %}</tbody>
-                </table>{% endif %}
+                </table>
             </td>
         </tr>
     {% endfor %}</tbody>

@@ -25,8 +25,9 @@
     text-align: center;
 }
 
-.vehicle-location, .vehicle-manoeuvre {
-    max-width: 15em;
+.vehicle-detail {
+    max-width: 20em;
+    vertical-align: top;
 }
 
 .vehicle-casualties table {
@@ -39,7 +40,7 @@
 }
 
 .accident-map {
-    height: 200px;
+    height: 250px;
     margin-bottom: 1em;
 }
 
