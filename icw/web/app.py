@@ -14,6 +14,7 @@ def get_app():
     app = aiohttp.web.Application()
 
     app['api-url'] = os.environ['ICW_API']
+    app['google-analytics-tracking-id'] = os.environ.get('GOOGLE_ANALYTICS_TRACKING_ID')
     app['api-session'] = aiohttp.ClientSession()
     app['static-url'] = '/static/'
 
@@ -33,6 +34,7 @@ def get_app():
                          context_processors=[asyncio.coroutine(lambda request: {
                              'static_url': app['static-url'],
                              'api_url': app['api-url'],
+                             'google_analytics_tracking_id': app['google-analytics-tracking-id']
                          })])
 
     return app
