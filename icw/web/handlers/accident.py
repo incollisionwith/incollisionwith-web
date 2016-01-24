@@ -23,6 +23,11 @@ class APIHandler(BaseHandler):
 class AccidentListHandler(APIHandler):
     def get(self, request):
         context = yield from self.get_api_json(request, 'accident')
+        context.update({
+            'severity': request.GET.getall('severity', ()),
+            'dateTimeLower': request.GET.get('dateTimeLower', ''),
+            'dateTimeUpper': request.GET.get('dateTimeUpper', ''),
+        })
         return aiohttp_jinja2.render_template('accident-list.html', request, context)
 
 

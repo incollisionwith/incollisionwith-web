@@ -96,3 +96,11 @@ table.pure-table.accident-detail {
 .footer a.github {
     color: #666666;
 }
+
+.box-padding {
+    padding:1em;
+}
+
+input[type='date'] {
+    width: 8em;
+}
