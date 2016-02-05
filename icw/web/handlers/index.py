@@ -10,3 +10,10 @@ class IndexHandler(BaseHandler):
     def get(self, request):
         context = {}
         return aiohttp_jinja2.render_template('index.html', request, context)
+
+
+class AboutDataHandler(BaseHandler):
+    @asyncio.coroutine
+    def get(self, request):
+        context = {}
+        return aiohttp_jinja2.render_template('about-data.html', request, context)

@@ -24,6 +24,8 @@ def get_app():
                          handlers.AccidentListHandler())
     app.router.add_route('*', '/incident/{accident_id}',
                          handlers.AccidentDetailHandler())
+    app.router.add_route('*', '/about-data',
+                         handlers.AboutDataHandler())
 
     app.router.add_static(app['static-url'],
                           os.path.join(os.path.dirname(__file__), 'static'))
