@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block article %}
-<h1>Incidents</h1>
 
 <div class="pure-g">
+    <div class="pure-u-1-1">
+        <div class="box-padding">
+            <h1>Incidents</h1>
+        </div>
+    </div>
     <div class="pure-u-1-4">
         <div class="box-padding">
             <h2>Filter</h2>
@@ -22,7 +26,44 @@
                     </dd>
                     <dt>Related news articles:</dt>
                     <dd>
-                        <input type="checkbox" name="news" value="yes" id="news"{% if news %} checked{% endif %}> <label for="news">Yes</label>
+                        <input type="checkbox" name="news" value="yes" id="news"{% if news == 'yes' %} checked{% endif %}> <label for="news">Yes</label>
+                    </dd>
+                    <dt>Highway authority:</dt>
+                    <dd>
+                        <select name="highwayAuthority">
+                            <option value="">—</option>{% for value in referenceData.HighwayAuthority.values() %}
+                            <option value="{{ value.id }}"{% if value.id == highwayAuthority %}
+                                    selected{% endif %}>{{ value.label }}</option>{% endfor %}
+                        </select>
+                    </dd>
+                    <dt>Involved vehicle and casualty types:</dt>
+                    <dd>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th><abbr title="vehicle">V</abbr></th>
+                                <th><abbr title="casualty">C</abbr></th>
+                                <th>Type</th>
+                            </tr>
+                            </thead>
+                            <tbody>{% for vehicleTypeId, vehicleType in referenceData.VehicleType.items()|sort %}
+                                <tr>
+                                    <td>{% if vehicleTypeId != '0' %}
+                                        <input type="checkbox" name="involvedVehicleType"
+                                               id="involvedVehicleType-{{ vehicleTypeId }}"
+                                               value="{{ vehicleTypeId }}"
+                                                {% if vehicleTypeId in involvedVehicleType %} checked{% endif %}>
+                                    {% endif %}</td>
+                                    <td>
+                                        <input type="checkbox" name="involvedCasualtyType"
+                                               id="involvedCasualtyType-{{ vehicleTypeId }}"
+                                               value="{{ vehicleTypeId }}"
+                                                {% if vehicleTypeId in involvedCasualtyType %} checked{% endif %}>
+                                    </td>
+                                    <td>{{ vehicleType.label }}</td>
+                                </tr>{% endfor %}
+                            </tbody>
+                        </table>
                     </dd>
                 </dl>
                 <input type="submit" value="Filter">
@@ -47,8 +88,8 @@
                 <tr>
                     <td><a href="incident/{{ accident.id }}">{{ accident.id }}</a></td>
                     <td>{{ accident.dateTime if accident.dateTime else accident.date }}</td>
-                    <td>{{ accident.numberOfVehicles }} {% for vehicle in accident.vehicles %}<i title="{{ vehicle.type.label }}" class="fa fa-{{ vehicle.type.fontAwesome }}"> </i> {% endfor %}</td>
-                    <td>{{ accident.numberOfCasualties }} {% for vehicle in accident.vehicles %}{% for casualty in vehicle.casualties %}<i title="{{ casualty.type.label }}" class="fa fa-{{ casualty.type.fontAwesome }} casualty-severity-{{ casualty.severity.id }}"> </i> {% endfor %}{% endfor %}</td>
+                    <td>{{ accident.numberOfVehicles }} {% for vehicle in accident.vehicles %}<i title="{{ vehicle.type.label }}" class="fa fa-{{ vehicle.type.fontAwesome or 'circle' }}"> </i> {% endfor %}</td>
+                    <td>{{ accident.numberOfCasualties }} {% for vehicle in accident.vehicles %}{% for casualty in vehicle.casualties %}<i title="{{ casualty.type.label }}" class="fa fa-{{ casualty.type.fontAwesome or 'circle' }} casualty-severity-{{ casualty.severity.id }}"> </i> {% endfor %}{% endfor %}</td>
                     <td>{{ accident.severity.label }}</td>
                     <td>{{ 'yes' if accident.citations else 'no' }}</td>
                 </tr>

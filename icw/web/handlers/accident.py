@@ -1,4 +1,5 @@
 import asyncio
+from collections import OrderedDict
 
 import aiohttp
 import aiohttp.web
@@ -12,7 +13,7 @@ class APIHandler(BaseHandler):
     def get_api_json(self, request, path):
         try:
             accident_url = request.app['api-url'] + path
-            response = yield from request.app['api-session'].get(accident_url + '?' + request.query_string)
+            response = yield from request.app['api-session'].get(accident_url)
             return (yield from response.json())
         except aiohttp.errors.ClientOSError as e:
             raise aiohttp.web.HTTPServiceUnavailable
@@ -22,12 +23,22 @@ class APIHandler(BaseHandler):
 
 class AccidentListHandler(APIHandler):
     def get(self, request):
-        context = yield from self.get_api_json(request, 'accident')
+        context, reference_data = yield from asyncio.gather(
+            self.get_api_json(request, 'accident?' + request.query_string),
+            self.get_api_json(request, 'reference-data'))
         context.update({
             'severity': request.GET.getall('severity', ()),
             'dateTimeLower': request.GET.get('dateTimeLower', ''),
             'dateTimeUpper': request.GET.get('dateTimeUpper', ''),
+            'involvedVehicleType': request.GET.getall('involvedVehicleType', ()),
+            'involvedCasualtyType': request.GET.getall('involvedCasualtyType', ()),
+            'highwayAuthority': request.GET.get('highwayAuthority'),
+            'news': request.GET.get('news'),
+            'referenceData': reference_data,
         })
+        context['referenceData']['HighwayAuthority'] = \
+            OrderedDict(i for i in sorted(context['referenceData']['HighwayAuthority'].items(),
+                                          key=lambda i: i[1]['label']))
         return aiohttp_jinja2.render_template('accident-list.html', request, context)
 
 
