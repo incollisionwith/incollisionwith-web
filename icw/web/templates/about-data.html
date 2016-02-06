@@ -47,6 +47,22 @@
                                 data</a>.</dd>
                     </dl>
                 </dd>
+                <dt><a href="{{ api_url }}accident/2014921401161"><code>/accident/{id}</code></a></dt>
+                <dd><p>JSON for a given accident ID.</p></dd>
+                <dt><a href="{{ api_url }}citation"><code>citation</code></a></dt>
+                <dd>
+                    <p>Endpoint for adding a news link to an accident. To use, POST with the following form
+                        parameters:</p>
+
+                    <dl>
+                        <dt><code>accident_id</code></dt>
+                        <dd>The accident identifier against which to record a news link.</dd>
+                        <dt><code>url</code></dt>
+                        <dd>The URL for the news link.</dd>
+                    </dl>
+                    <p>Periodically, a job is run to fetch metadata from the given URL to include in the page. The
+                        citation functionality requires a lot more work to make it easier to use and moderate.</p>
+                </dd>
             </dl>
         </div>
     </div>
