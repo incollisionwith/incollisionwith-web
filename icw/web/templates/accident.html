@@ -210,7 +210,7 @@
 
 {% if citations %}
 <ul>{% for citation in citations %}
-    <li><a href="{{ citation.url }}">{{ citation.title or citation.url }}</a>
+    <li><a href="{{ citation.url }}" rel="nofollow">{{ citation.title or citation.url }}</a>
         {% if citation.publisher %} — <i>{{ citation.publisher }}</i>{% endif %}
         {% if citation.published %} ({{ citation.published }}){% endif %}
         {% if citation.description %}<br>
