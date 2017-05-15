@@ -39,9 +39,9 @@
                     <dt>Police force:</dt>
                     <dd>
                         <select name="policeForce">
-                            <option value="">—</option>{% for value in referenceData.PoliceForce.values() %}
+                            <option value="">—</option>{% for value in referenceData.PoliceForce.values() %}{% if value.label %}
                             <option value="{{ value.id }}"{% if value.id == policeForce %}
-                                    selected{% endif %}>{{ value.label }}</option>{% endfor %}
+                                    selected{% endif %}>{{ value.label }}</option>{% endif %}{% endfor %}
                         </select>
                     </dd>
                     <dt>Police attended?</dt>
