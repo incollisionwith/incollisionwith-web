@@ -36,6 +36,18 @@
                                     selected{% endif %}>{{ value.label }}</option>{% endfor %}
                         </select>
                     </dd>
+                    <dt>Police force:</dt>
+                    <dd>
+                        <select name="policeForce">
+                            <option value="">—</option>{% for value in referenceData.PoliceForce.values() %}
+                            <option value="{{ value.id }}"{% if value.id == policeForce %}
+                                    selected{% endif %}>{{ value.label }}</option>{% endfor %}
+                        </select>
+                    </dd>
+                    <dt>Police attended?</dt>
+                    <dd>
+                        <input type="checkbox" name="news" value="yes" id="policeAttended"{% if policeAttended == 'yes' %} checked{% endif %}> <label for="policeAttended">Yes</label>
+                    </dd>
                     <dt>Involved vehicle and casualty types:</dt>
                     <dd>
                         <table>

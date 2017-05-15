@@ -33,11 +33,16 @@ class AccidentListHandler(APIHandler):
             'involvedVehicleType': request.GET.getall('involvedVehicleType', ()),
             'involvedCasualtyType': request.GET.getall('involvedCasualtyType', ()),
             'highwayAuthority': request.GET.get('highwayAuthority'),
+            'policeForce': request.GET.get('policeForce'),
+            'policeAttended': request.GET.get('policeAttended'),
             'news': request.GET.get('news'),
             'referenceData': reference_data,
         })
         context['referenceData']['HighwayAuthority'] = \
             OrderedDict(i for i in sorted(context['referenceData']['HighwayAuthority'].items(),
+                                          key=lambda i: i[1]['label']))
+        context['referenceData']['PoliceForce'] = \
+            OrderedDict(i for i in sorted(context['referenceData']['PoliceForce'].items(),
                                           key=lambda i: i[1]['label']))
         return aiohttp_jinja2.render_template('accident-list.html', request, context)
 
