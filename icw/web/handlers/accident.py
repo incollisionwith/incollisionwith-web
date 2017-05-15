@@ -2,6 +2,7 @@ import asyncio
 from collections import OrderedDict
 
 import aiohttp
+import aiohttp.client_exceptions
 import aiohttp.web
 import aiohttp_jinja2
 
@@ -15,9 +16,9 @@ class APIHandler(BaseHandler):
             accident_url = request.app['api-url'] + path
             response = yield from request.app['api-session'].get(accident_url)
             return (yield from response.json())
-        except aiohttp.errors.ClientOSError as e:
+        except aiohttp.client_exceptions.ClientOSError as e:
             raise aiohttp.web.HTTPServiceUnavailable
-        except aiohttp.errors.ClientError as e:
+        except aiohttp.client_exceptions.ClientError as e:
             raise aiohttp.web.HTTPError(status=e.status)
 
 
@@ -43,7 +44,7 @@ class AccidentListHandler(APIHandler):
                                           key=lambda i: i[1]['label']))
         context['referenceData']['PoliceForce'] = \
             OrderedDict(i for i in sorted(context['referenceData']['PoliceForce'].items(),
-                                          key=lambda i: i[1]['label']))
+                                          key=lambda i: (i[1].get('label') or '')))
         return aiohttp_jinja2.render_template('accident-list.html', request, context)
 
 
